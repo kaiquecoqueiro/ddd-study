@@ -51,9 +51,10 @@ namespace src.Infrastructure.Repository
 
             return orderModels.Select(orderModel =>
             {
-                var items = orderModel.Items.Select(item => new OrderItem(item.Id, item.Name, item.Price, item.ProductId, item.Quantity)).ToList();
-                var order = new Order(orderModel.Id, orderModel.CustomerId, items);
-                return order;
+                var items = orderModel.Items.Select(item
+                    => new OrderItem(item.Id, item.Name, item.Price, item.ProductId, item.Quantity));
+
+                return new Order(orderModel.Id, orderModel.CustomerId, items.ToList());
             }).ToList();
         }
 

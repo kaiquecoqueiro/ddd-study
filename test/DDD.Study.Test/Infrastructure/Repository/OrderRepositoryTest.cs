@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using DDD.Study.Domain.Entitiy;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ namespace DDD.Study.Test.Infrastructure.Repository
         }
 
         [Fact]
-        public void CreateAsync_ShouldCreateOrder()
+        public async Task CreateAsync_ShouldCreateOrder()
         {
             var productId1 = Guid.NewGuid();
             var itemId1 = Guid.NewGuid();
@@ -42,7 +43,7 @@ namespace DDD.Study.Test.Infrastructure.Repository
             var orderId = Guid.NewGuid();
             var order = new Order(orderId, customerId, new List<OrderItem> { item1, item2 });
 
-            _subject.CreateAsync(order, _cancellationToken).GetAwaiter().GetResult();
+            await _subject.CreateAsync(order, _cancellationToken);
 
             var orderModel = _context.Orders.First(x => x.Id == orderId);
             orderModel.Id.Should().Be(orderId);
@@ -63,7 +64,7 @@ namespace DDD.Study.Test.Infrastructure.Repository
         }
 
         [Fact]
-        public void FindAsync_ShouldFindOrder()
+        public async Task FindAsync_ShouldFindOrder()
         {
             var productId1 = Guid.NewGuid();
             var itemId1 = Guid.NewGuid();
@@ -76,7 +77,7 @@ namespace DDD.Study.Test.Infrastructure.Repository
             var order = new Order(orderId, customerId, new List<OrderItem> { item1, item2 });
             _subject.CreateAsync(order, _cancellationToken).Wait();
 
-            var result = _subject.FindAsync(order.Id, _cancellationToken).GetAwaiter().GetResult();
+            var result = await _subject.FindAsync(order.Id, _cancellationToken);
             result.Id.Should().Be(orderId);
             result.CustomerId.Should().Be(customerId);
 
@@ -97,19 +98,19 @@ namespace DDD.Study.Test.Infrastructure.Repository
         }
 
         [Fact]
-        public void FindAsync_OrderNotFound_ShouldThrowException()
+        public async Task FindAsync_OrderNotFound_ShouldThrowException()
         {
             var inexistentOrder = Guid.NewGuid();
 
-            var result = Assert.Throws<Exception>(() => _subject.FindAsync(
+            var result = await Assert.ThrowsAsync<Exception>(() => _subject.FindAsync(
                 inexistentOrder,
-                _cancellationToken).GetAwaiter().GetResult());
+                _cancellationToken));
 
             result.Message.Should().Be("Order not found.");
         }
 
         [Fact]
-        public void FindAllAsync_ShouldFindAllOrder()
+        public async Task FindAllAsync_ShouldFindAllOrder()
         {
             var productId1 = Guid.NewGuid();
             var itemId1 = Guid.NewGuid();
@@ -120,7 +121,7 @@ namespace DDD.Study.Test.Infrastructure.Repository
             var customerId = Guid.NewGuid();
             var orderId = Guid.NewGuid();
             var order = new Order(orderId, customerId, new List<OrderItem> { item1, item2 });
-            _subject.CreateAsync(order, _cancellationToken).Wait();
+            await _subject.CreateAsync(order, _cancellationToken);
 
             var productId3 = Guid.NewGuid();
             var itemId3 = Guid.NewGuid();
@@ -131,9 +132,9 @@ namespace DDD.Study.Test.Infrastructure.Repository
             var customerId2 = Guid.NewGuid();
             var orderId2 = Guid.NewGuid();
             var order2 = new Order(orderId2, customerId2, new List<OrderItem> { item3, item4 });
-            _subject.CreateAsync(order2, _cancellationToken).Wait();
+            await _subject.CreateAsync(order2, _cancellationToken);
 
-            var result = _subject.FindAllAsync(_cancellationToken).Result;
+            var result = await _subject.FindAllAsync(_cancellationToken);
             result.Should().HaveCount(2);
 
             var firstOrder = result.First();
@@ -169,6 +170,14 @@ namespace DDD.Study.Test.Infrastructure.Repository
             lastItem.Price.Should().Be(300);
             lastItem.ProductId.Should().Be(productId3);
             lastItem.Quantity.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task FindAllAsync_NoOrders_ShouldReturnEmptyList()
+        {
+            var result = await _subject.FindAllAsync(_cancellationToken);
+            result.Should().HaveCount(0);
+            result.Should().BeEmpty();
         }
 
         public void Dispose()
