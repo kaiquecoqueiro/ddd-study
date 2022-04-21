@@ -15,7 +15,7 @@ namespace src.Services
             if (!items.Any())
                 throw new ArgumentException("Order must have at least one item", nameof(items));
 
-            var order = new Order(customer.Id, items);
+            var order = new Order(Guid.NewGuid(), customer.Id, items);
             customer.AddRewardPoints(order.Total() / 2);
 
             return order;

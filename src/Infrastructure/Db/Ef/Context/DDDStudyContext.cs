@@ -8,6 +8,7 @@ namespace src.Infrastructure.Db.Ef.Context
     {
         public DbSet<ProductModel> Products { get; set; }
         public DbSet<CustomerModel> Customers { get; set; }
+        public DbSet<OrderModel> Orders { get; set; }
 
         public DDDStudyContext(DbContextOptions<DDDStudyContext> options)
             : base(options) { }
@@ -15,6 +16,9 @@ namespace src.Infrastructure.Db.Ef.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new ProductModelMapping());
+            modelBuilder.ApplyConfiguration(new CustomerModelMapping());
+            modelBuilder.ApplyConfiguration(new OrderModelMapping());
+            modelBuilder.ApplyConfiguration(new OrderItemModelMapping());
         }
     }
 }

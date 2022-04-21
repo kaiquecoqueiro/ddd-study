@@ -6,9 +6,9 @@ namespace DDD.Study.Domain.Entitiy
 {
     public class Order
     {
-        public Order(Guid customerId, List<OrderItem> items)
+        public Order(Guid id, Guid customerId, List<OrderItem> items)
         {
-            Id = Guid.NewGuid();
+            Id = id;
             CustomerId = customerId;
             _items = items;
             Validate();
@@ -21,13 +21,16 @@ namespace DDD.Study.Domain.Entitiy
 
             if (Items?.Count == 0)
                 throw new InvalidOperationException("Must have at least one item.");
+
+            if (Id == Guid.Empty)
+                throw new InvalidOperationException("Id is required.");
         }
 
-        private Guid Id { get; set; }
+        public Guid Id { get; set; }
         public Guid CustomerId { get; private set; }
         private List<OrderItem> _items { get; set; }
         public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
 
-        public int Total() => _items.Sum(x => x.GetPrice());
+        public int Total() => _items.Sum(x => x.GetCalculatedPrice());
     }
 }

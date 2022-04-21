@@ -4,21 +4,21 @@ namespace DDD.Study.Domain.Entitiy
 {
     public class OrderItem
     {
-        public OrderItem(string name, int price, Guid productId, int quantity)
+        public OrderItem(Guid id, string name, int price, Guid productId, int quantity)
         {
-            Id = Guid.NewGuid();
+            Id = id;
             Name = name;
             Price = price;
             ProductId = productId;
             Quantity = quantity;
         }
-
-        private Guid Id { get; set; }
+        //TODO: CRIAR UM VALIDATE DESTA ENTIDADE
+        public Guid Id { get; private set; }
         public string Name { get; private set; }
-        private int Price { get; set; }
+        public int Price { get; private set; }
         public Guid ProductId { get; private set; }
         public int Quantity { get; private set; }
 
-        public int GetPrice() => Price * Quantity;
+        public int GetCalculatedPrice() => Price * Quantity;
     }
 }

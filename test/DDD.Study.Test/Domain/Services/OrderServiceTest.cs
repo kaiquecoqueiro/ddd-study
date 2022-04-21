@@ -12,11 +12,11 @@ namespace DDD.Study.Test.Services
         [Fact]
         public void Total_SeveralOrder_ShouldGetTotalOfAllOrders()
         {
-            var orderItem1 = new OrderItem("Item 1", 100, Guid.NewGuid(), 1);
-            var order1 = new Order(Guid.NewGuid(), new List<OrderItem> { orderItem1 });
+            var orderItem1 = new OrderItem(Guid.NewGuid(), "Item 1", 100, Guid.NewGuid(), 1);
+            var order1 = new Order(Guid.NewGuid(), Guid.NewGuid(), new List<OrderItem> { orderItem1 });
 
-            var orderItem2 = new OrderItem("Item 2", 200, Guid.NewGuid(), 2);
-            var order2 = new Order(Guid.NewGuid(), new List<OrderItem> { orderItem2 });
+            var orderItem2 = new OrderItem(Guid.NewGuid(), "Item 2", 200, Guid.NewGuid(), 2);
+            var order2 = new Order(Guid.NewGuid(), Guid.NewGuid(), new List<OrderItem> { orderItem2 });
 
             var result = OrderService.GetTotal(new List<Order> { order1, order2 });
             result.Should().Be(500);
@@ -26,7 +26,7 @@ namespace DDD.Study.Test.Services
         public void PlaceOrder_ShouldPlaceAndOrder()
         {
             var customer = new Customer(Guid.NewGuid(), "Customer 1");
-            var orderItem1 = new OrderItem("Item 1", 10, Guid.NewGuid(), 1);
+            var orderItem1 = new OrderItem(Guid.NewGuid(), "Item 1", 10, Guid.NewGuid(), 1);
 
             var order = OrderService.PlaceOrder(customer, new List<OrderItem> { orderItem1 });
 
