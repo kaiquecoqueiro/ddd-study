@@ -22,6 +22,9 @@ namespace src.Infrastructure.Repository
 
         public async Task CreateAsync(Order entity, CancellationToken cancellationToken)
         {
+            if (entity is null)
+                throw new ArgumentNullException(nameof(entity), "An order must be informed.");
+
             var orderModel = new OrderModel
             {
                 Id = entity.Id,

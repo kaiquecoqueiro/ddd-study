@@ -64,6 +64,16 @@ namespace DDD.Study.Test.Infrastructure.Repository
         }
 
         [Fact]
+        public async Task CreateAsync_PassingNullOrder_ShouldThrowException()
+        {
+            var result = await Assert.ThrowsAsync<ArgumentNullException>(() => _subject.CreateAsync(
+                null,
+                _cancellationToken));
+
+            result.Message.Should().Be("An order must be informed. (Parameter 'entity')");
+        }
+
+        [Fact]
         public async Task FindAsync_ShouldFindOrder()
         {
             var productId1 = Guid.NewGuid();

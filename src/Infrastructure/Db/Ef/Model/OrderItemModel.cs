@@ -10,7 +10,6 @@ namespace src.Infrastructure.Db.Ef.Model
         public int Quantity { get; set; }
 
         public Guid ProductId { get; set; }
-        public ProductModel Product { get; set; }
         public Guid OrderId { get; set; }
         public OrderModel Order { get; set; }
     }

@@ -12,8 +12,8 @@ namespace src.Infrastructure.Db.Ef.Mappings
 
             builder.HasKey(x => x.Id);
 
-            // builder.Property(x => x.CustomerId)
-            //     .HasColumnType("varchar(20)");
+            builder.Property(x => x.CustomerId)
+                .HasColumnType("uniqueidentifier");
 
             builder.HasMany(x => x.Items)
                 .WithOne(x => x.Order)
