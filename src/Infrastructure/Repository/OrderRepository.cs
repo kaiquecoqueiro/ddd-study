@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DDD.Study.Domain.Entitiy;
+using Microsoft.EntityFrameworkCore;
 using src.Domain.Repository;
 using src.Infrastructure.Db.Ef.Context;
 using src.Infrastructure.Db.Ef.Model;
@@ -38,14 +39,33 @@ namespace src.Infrastructure.Repository
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task<IList<Order>> FindAllAsync(CancellationToken cancellationToken, int pageNumber, int pageSize)
+        public async Task<IList<Order>> FindAllAsync(CancellationToken cancellationToken, int pageNumber = 0, int pageSize = 10)
         {
-            throw new NotImplementedException();
+            var orderModels = await _context
+            .Orders
+            .Include(x => x.Items)
+            .AsNoTracking()
+            .Skip(pageNumber)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+            return orderModels.Select(orderModel =>
+            {
+                var items = orderModel.Items.Select(item => new OrderItem(item.Id, item.Name, item.Price, item.ProductId, item.Quantity)).ToList();
+                var order = new Order(orderModel.Id, orderModel.CustomerId, items);
+                return order;
+            }).ToList();
         }
 
-        public Task<Order> FindAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<Order> FindAsync(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var orderModel = await _context.Orders.Include(x => x.Items).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            if (orderModel is null)
+                throw new Exception("Order not found.");
+
+            var itemsModel = orderModel.Items.Select(x => new OrderItem(x.Id, x.Name, x.Price, x.ProductId, x.Quantity)).ToList();
+
+            return new Order(orderModel.Id, orderModel.CustomerId, itemsModel);
         }
 
         public Task UpdateAsync(Order entity, CancellationToken cancellationToken)
