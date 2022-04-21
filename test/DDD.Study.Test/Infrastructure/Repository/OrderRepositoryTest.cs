@@ -173,6 +173,51 @@ namespace DDD.Study.Test.Infrastructure.Repository
         }
 
         [Fact]
+        public async Task FindAllAsync_Paging_ShouldFindTheOrderThatIsInTheSecondPage()
+        {
+            var productId1 = Guid.NewGuid();
+            var itemId1 = Guid.NewGuid();
+            var item1 = new OrderItem(itemId1, "item1", 100, productId1, 2);
+            var productId2 = Guid.NewGuid();
+            var itemId2 = Guid.NewGuid();
+            var item2 = new OrderItem(itemId2, "item2", 200, productId2, 2);
+            var customerId = Guid.NewGuid();
+            var orderId = Guid.NewGuid();
+            var order = new Order(orderId, customerId, new List<OrderItem> { item1, item2 });
+            await _subject.CreateAsync(order, _cancellationToken);
+
+            var productId3 = Guid.NewGuid();
+            var itemId3 = Guid.NewGuid();
+            var item3 = new OrderItem(itemId3, "item3", 300, productId3, 1);
+            var productId4 = Guid.NewGuid();
+            var itemId4 = Guid.NewGuid();
+            var item4 = new OrderItem(itemId4, "item4", 500, productId4, 5);
+            var customerId2 = Guid.NewGuid();
+            var orderId2 = Guid.NewGuid();
+            var order2 = new Order(orderId2, customerId2, new List<OrderItem> { item3, item4 });
+            await _subject.CreateAsync(order2, _cancellationToken);
+
+            var result = await _subject.FindAllAsync(_cancellationToken, 1, 1);
+            result.Should().HaveCount(1);
+            var lastOrder = result.Last();
+            lastOrder.Id.Should().Be(orderId2);
+            lastOrder.CustomerId.Should().Be(customerId2);
+            lastOrder.Items.Should().HaveCount(2);
+            var firstItem = lastOrder.Items.First();
+            firstItem.Id.Should().Be(itemId4);
+            firstItem.Name.Should().Be("item4");
+            firstItem.Price.Should().Be(500);
+            firstItem.ProductId.Should().Be(productId4);
+            firstItem.Quantity.Should().Be(5);
+            var lastItem = lastOrder.Items.Last();
+            lastItem.Id.Should().Be(itemId3);
+            lastItem.Name.Should().Be("item3");
+            lastItem.Price.Should().Be(300);
+            lastItem.ProductId.Should().Be(productId3);
+            lastItem.Quantity.Should().Be(1);
+        }
+
+        [Fact]
         public async Task FindAllAsync_NoOrders_ShouldReturnEmptyList()
         {
             var result = await _subject.FindAllAsync(_cancellationToken);

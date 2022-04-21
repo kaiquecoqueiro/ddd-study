@@ -68,10 +68,5 @@ namespace src.Infrastructure.Repository
 
             return new Order(orderModel.Id, orderModel.CustomerId, itemsModel);
         }
-
-        public Task UpdateAsync(Order entity, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
