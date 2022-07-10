@@ -15,7 +15,9 @@ namespace DDD.Study.Test.Domain.Event.@Shared
 
             dispatcher.Register("MockEvent", handler);
 
-            dispatcher.GetEventHandlers().Should().Contain(handler);
+            dispatcher.GetEventHandlers().Should().ContainKey("MockEvent");
+            dispatcher.GetEventHandlers()["MockEvent"].Should().HaveCount(1);
+            dispatcher.GetEventHandlers()["MockEvent"][0].Should().Be(handler);
         }
     }
 }

@@ -4,7 +4,9 @@ namespace src.Domain.Event.@Shared
 {
     public class EventDispatcher : IEventDispatcher
     {
-        private Dictionary<string, IList<IEventHandler<IEvent>>> _eventHandlers;
+        private Dictionary<string, IList<IEventHandler<IEvent>>> _eventHandlers = new();
+
+
         public Dictionary<string, IList<IEventHandler<IEvent>>> GetEventHandlers() => _eventHandlers;
 
         public void Notify(IEvent @event)
