@@ -20,6 +20,7 @@ public class MockEventHandler : IEventHandler<IEvent>
     public void Handle(IEvent @event)
     {
         NumberOfTimeHandleWasCalled++;
+        Console.WriteLine("Executing handler...");
     }
 
     public int NumberOfTimeHandleWasCalled { get; private set; }
