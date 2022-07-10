@@ -7,17 +7,28 @@ namespace DDD.Study.Test.Domain.Event.@Shared
 {
     public class EventDispatcherTest
     {
+        readonly EventDispatcher _dispatcher = new();
+        readonly MockEventHandler _handler = new();
+
         [Fact]
         public void Register_ShouldRegisterAnEvent()
         {
-            var dispatcher = new EventDispatcher();
-            var handler = new MockEventHandler();
+            _dispatcher.Register("MockEvent", _handler);
 
-            dispatcher.Register("MockEvent", handler);
+            _dispatcher.GetEventHandlers().Should().ContainKey("MockEvent");
+            _dispatcher.GetEventHandlers()["MockEvent"].Should().HaveCount(1);
+            _dispatcher.GetEventHandlers()["MockEvent"][0].Should().Be(_handler);
+        }
 
-            dispatcher.GetEventHandlers().Should().ContainKey("MockEvent");
-            dispatcher.GetEventHandlers()["MockEvent"].Should().HaveCount(1);
-            dispatcher.GetEventHandlers()["MockEvent"][0].Should().Be(handler);
+        [Fact]
+        public void Unregister_ShouldUnregisterAndEvent()
+        {
+            _dispatcher.Register("MockEvent", _handler);
+            _dispatcher.GetEventHandlers()["MockEvent"][0].Should().Be(_handler);
+
+            _dispatcher.Unregister("MockEvent", _handler);
+
+            _dispatcher.GetEventHandlers()["MockEvent"].Should().BeNullOrEmpty();
         }
     }
 }

@@ -22,9 +22,10 @@ namespace src.Domain.Event.@Shared
             _eventHandlers[eventName].Add(eventHandler);
         }
 
-        public void Unregister(string eventName)
+        public void Unregister(string eventName, IEventHandler<IEvent> eventHandler)
         {
-            throw new System.NotImplementedException();
+            if (_eventHandlers.ContainsKey(eventName) && _eventHandlers[eventName].Contains(eventHandler))
+                _eventHandlers[eventName].Remove(eventHandler);
         }
 
         public void UnregisterAll()
