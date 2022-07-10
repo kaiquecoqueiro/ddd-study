@@ -11,7 +11,13 @@ namespace src.Domain.Event.@Shared
 
         public void Notify(IEvent @event)
         {
-            throw new System.NotImplementedException();
+            var eventName = @event.GetType().Name;
+            if (_eventHandlers.ContainsKey(eventName))
+            {
+                var handlers = _eventHandlers[eventName];
+                foreach (var handler in handlers)
+                    handler.Handle(@event);
+            }
         }
 
         public void Register(string eventName, IEventHandler<IEvent> eventHandler)

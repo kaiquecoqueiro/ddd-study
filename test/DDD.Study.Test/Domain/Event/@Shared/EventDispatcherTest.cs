@@ -1,3 +1,4 @@
+using System;
 using DDD.Study.Test.Mocks;
 using FluentAssertions;
 using src.Domain.Event.Shared;
@@ -40,6 +41,19 @@ namespace DDD.Study.Test.Domain.Event.@Shared
             _dispatcher.UnregisterAll();
 
             _dispatcher.GetEventHandlers().Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Notify_ShouldNotifyTheEvent()
+        {
+            _dispatcher.Register("MockEvent", _handler);
+            _dispatcher.GetEventHandlers()["MockEvent"][0].Should().Be(_handler);
+
+            var mockEvent = new MockEvent("Data test", DateTime.Now);
+
+            _dispatcher.Notify(mockEvent);
+
+            _handler.NumberOfTimeHandleWasCalled.Should().Be(1);
         }
     }
 }
