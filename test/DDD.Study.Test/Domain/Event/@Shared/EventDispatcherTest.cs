@@ -30,5 +30,16 @@ namespace DDD.Study.Test.Domain.Event.@Shared
 
             _dispatcher.GetEventHandlers()["MockEvent"].Should().BeNullOrEmpty();
         }
+
+        [Fact]
+        public void UnregisterAll_ShouldUnregisterAllTheEvents()
+        {
+            _dispatcher.Register("MockEvent", _handler);
+            _dispatcher.GetEventHandlers()["MockEvent"][0].Should().Be(_handler);
+
+            _dispatcher.UnregisterAll();
+
+            _dispatcher.GetEventHandlers().Should().BeEmpty();
+        }
     }
 }

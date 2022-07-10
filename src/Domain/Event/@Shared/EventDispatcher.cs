@@ -28,9 +28,6 @@ namespace src.Domain.Event.@Shared
                 _eventHandlers[eventName].Remove(eventHandler);
         }
 
-        public void UnregisterAll()
-        {
-            throw new System.NotImplementedException();
-        }
+        public void UnregisterAll() => _eventHandlers.Clear();
     }
 }
